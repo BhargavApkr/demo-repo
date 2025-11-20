@@ -16,24 +16,28 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests=false'
+                dir('simple-java-app') {
+                    sh 'mvn clean package -DskipTests=false'
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'mvn test'
+                dir('simple-java-app') {
+                    sh 'mvn test'
+                }
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit 'simple-java-app/target/surefire-reports/*.xml'
                 }
             }
         }
 
         stage('Archive Artifact') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'simple-java-app/target/*.jar', fingerprint: true
             }
         }
 
