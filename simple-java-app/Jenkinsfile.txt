@@ -1,0 +1,51 @@
+pipeline {
+    agent { label 'slave1' }   // change to your node label
+
+    tools {
+        maven 'MAVEN_HOME'
+        jdk 'JAVA_HOME'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/BhargavApkr/demo-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests=false'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deployment placeholder"
+            }
+        }
+    }
+
+    post {
+        success { echo "Pipeline completed successfully!" }
+        failure { echo "Pipeline failed!" }
+    }
+}
