@@ -2,7 +2,7 @@ package com.example;
 
 public class App {
     public static String greet() {
-        return "Hello from Jenkins CI!!";
+        return "Hello from Jenkins CI!";
     }
 
     public static void main(String[] args) {
