@@ -1,0 +1,36 @@
+pipeline {
+  agent { label 'slave1' }   // choose label matching your agent
+  environment {
+    IMAGE = "myapp:${env.BUILD_ID}"
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'echo "build step (compile / docker build / maven etc.)"'
+        // e.g., for docker: sh "docker build -t $IMAGE ."
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'echo "run tests here"'
+        // sh 'npm test' or 'mvn test'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        // Example: call a script to deploy to your environment
+        sh './deploy/deploy.sh'
+      }
+    }
+  }
+  post {
+    always {
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    }
+  }
+}
